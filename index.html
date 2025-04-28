@@ -1,39 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Telegram WebApp</title>
-    <style>
-        body { font-family: Arial; text-align: center; padding: 20px; }
-        button { background: #0088cc; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram Mini App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .profile {
+      display: inline-block;
+      text-align: center;
+    }
+
+    .profile img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+
+    .profile .username {
+      margin-top: 10px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
-    <h1>سلام! به وب‌اپ من خوش آمدید</h1>
-    <button onclick="sendMessage()">ارسال پیام به ربات</button>
+  <div class="profile">
+    <img id="profile-pic" src="" alt="Profile Picture">
+    <div class="username" id="username"></div>
+  </div>
 
-    <script>
-        function sendMessage() {
-            const tg = window.Telegram.WebApp;
-            const chatId = tg.initDataUnsafe.user?.id;
-            
-            if (!chatId) {
-                alert("خطا: کاربر شناسایی نشد!");
-                return;
-            }
+  <script>
+    // Telegram Web Apps API
+    const tg = window.Telegram.WebApp;
 
-            fetch('http://localhost:5000/main.html', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: chatId })
-            })
-            .then(response => response.json())
-            .then(data => alert(data.message))
-            .catch(error => alert("خطا: " + error));
-        }
+    // Set profile picture and username
+    const user = tg.initDataUnsafe.user;
+    if (user) {
+      document.getElementById('profile-pic').src = user.photo_url || 'default-profile.png';
+      document.getElementById('username').textContent = user.username || user.first_name || 'User';
+    } else {
+      document.getElementById('username').textContent = 'No user data available';
+    }
 
-        Telegram.WebApp.expand();
-        Telegram.WebApp.ready();
-    </script>
+    // Expand the Web App to full height
+    tg.expand();
+  </script>
 </body>
+
 </html>
